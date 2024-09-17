@@ -1,0 +1,49 @@
+name: etoolz
+version: 1.0.0
+apiVersion: 1.16.5
+main: com.eiztripsdev.Main
+commands:
+  ewspeed:
+    description: Устанавливает скорость ходьбы.
+    usage: /ewspeed <значение скорости>
+
+  efspeed:
+    description: Устанавливает скорость полёта.
+    usage: /efspeed <значение скорости>
+
+  efly:
+    description: Включает/выключает полет игрока.
+    usage: /efly
+
+  evanish:
+    description: Выключает/Включает видимость игрока.
+    usage: /evanish
+    usage: /ev
+
+  ev:
+    description: Выключает/Включает видимость игрока.
+    usage: /ev
+
+  ebroadcast:
+    description: Отправляет сообщение всем игрокам.
+    usage: /ebroadcast <сообщение>
+  
+  ebc:
+    description: Отправляет сообщение всем игрокам.
+    usage: /ebc <сообщение>
+
+  eheal:
+    description: Вылечить здоровье игроку
+    usage: /eheal <ник игрока>
+    
+  egod:
+    description: Включает/выключает бессмертие игрока
+    usage: /egod <ник игрока>
+
+  egamemode:
+    description: Изменяет режим игры игроку
+    usage: /egamemode <режим> <ник игрока>
+  
+  egm:
+    description: Изменяет режим игры игроку
+    usage: /egm <режим> <ник игрока>
