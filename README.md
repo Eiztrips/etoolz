@@ -1,2 +1,10 @@
-# etoolz
-A mod similar to essential. Simplifies the use of some admin commands. (under development)
+# Комманды:
+
+- ewspeed
+- efspeed
+- efly
+- evanish (ev)
+- ebroadcast (ebc)
+- eheal
+- egod
+- egamemode (egm)
