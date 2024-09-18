@@ -112,7 +112,7 @@ public class MainCommandExecutor implements CommandExecutor {
         } else {
             Player targetPlayer = Bukkit.getPlayer(args[0]);
             if (targetPlayer == null) {
-                player.sendMessage(PREFIX + "Игрок с таким именем не найден.");
+                player.sendMessage(PREFIX + ChatColor.RED + "Игрок с таким именем не найден.");
                 return false;
             } else {
                 targetPlayer.setHealth(targetPlayer.getMaxHealth());
