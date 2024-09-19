@@ -20,10 +20,10 @@ public class AttributeCommandExecutor implements CommandExecutor {
         Player player = (Player) sender;
 
         switch (cmd.getName().toLowerCase()) {
-            case "ewspeed":
+            case "wspeed":
                 return WalkSpeedCommand(player, args);
 
-            case "efspeed":
+            case "fspeed":
                 return FlySpeedCommand(player, args);
 
             default:

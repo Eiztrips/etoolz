@@ -6,12 +6,12 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        String[] AttributeCommandExecutor = {"ewspeed", "efspeed"};
+        String[] AttributeCommandExecutor = {"wspeed", "fspeed"};
         for (String command : AttributeCommandExecutor) {
             getCommand(command).setExecutor(new AttributeCommandExecutor());
         }
 
-        String[] MainCommandExecutor = {"efly", "evanish", "ev", "ebroadcast", "ebc", "eheal", "egod", "egamemode", "egm"};
+        String[] MainCommandExecutor = {"fly", "vanish", "v", "broadcast", "bc", "heal", "god", "gamemode", "gm", "kick", "ban", "unban", "inv", "inventory", "echest", "enderchest"};
         for (String command : MainCommandExecutor) {
             getCommand(command).setExecutor(new MainCommandExecutor());
         }
