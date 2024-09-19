@@ -3,47 +3,53 @@ version: 1.0.0
 apiVersion: 1.16.5
 main: com.eiztripsdev.Main
 commands:
-  ewspeed:
+  wspeed:
     description: Устанавливает скорость ходьбы.
-    usage: /ewspeed <значение скорости>
 
-  efspeed:
+  fspeed:
     description: Устанавливает скорость полёта.
-    usage: /efspeed <значение скорости>
 
-  efly:
+  fly:
     description: Включает/выключает полет игрока.
-    usage: /efly
 
-  evanish:
+  vanish:
     description: Выключает/Включает видимость игрока.
-    usage: /evanish
-    usage: /ev
-
-  ev:
+  v:
     description: Выключает/Включает видимость игрока.
-    usage: /ev
 
-  ebroadcast:
+  broadcast:
     description: Отправляет сообщение всем игрокам.
-    usage: /ebroadcast <сообщение>
-  
-  ebc:
+  bc:
     description: Отправляет сообщение всем игрокам.
-    usage: /ebc <сообщение>
 
-  eheal:
+  heal:
     description: Вылечить здоровье игроку
-    usage: /eheal <ник игрока>
     
-  egod:
+  god:
     description: Включает/выключает бессмертие игрока
-    usage: /egod <ник игрока>
 
-  egamemode:
+  gamemode:
     description: Изменяет режим игры игроку
-    usage: /egamemode <режим> <ник игрока>
+  gm:
+    description: Изменяет режим игры игроку
+
+  kick:
+    description: Кикнуть игрока
+
+  ban:
+    description: Забанить игрока
   
-  egm:
-    description: Изменяет режим игры игроку
-    usage: /egm <режим> <ник игрока>
+  unban:
+    description: Разбанить игрока
+  
+  inventory:
+    description: Открыть инвентарь игрока
+
+  inv:
+    description: Открыть инвентарь игрока
+  
+  echest:
+    description: Открыть эндер-сундук игрока
+
+  enderchest:
+    description: Открыть эндер-сундук игрока
