@@ -1,5 +1,9 @@
 package com.eiztripsdev;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import org.bukkit.BanList;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,6 +18,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class MainCommandExecutor implements CommandExecutor {
     private static final String PREFIX = ChatColor.translateAlternateColorCodes('&', "&l&0[&9E&dT&0]§r§7 ");
     private static final String SERVERPREFIX = ChatColor.translateAlternateColorCodes('&', "&l&0[&9Test&dServer&0]§r§7 ");
+    
+    private final EventListener eventListener;
+    public MainCommandExecutor(EventListener eventListener) {
+        this.eventListener = eventListener;
+    }
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -63,6 +72,12 @@ public class MainCommandExecutor implements CommandExecutor {
             case "echest":
             case "enderchest":
                 return EChestCommand(player, args);
+            
+            case "mute":
+                return MuteCommand(player, args);
+            
+            case "unmute":
+                return UnmuteCommand(player, args);
                 
             default:
                 return false;
@@ -246,25 +261,59 @@ public class MainCommandExecutor implements CommandExecutor {
 
     private boolean BanCommand(Player player, String[] args) {
         if (args.length < 2) {
-            player.sendMessage(PREFIX + ChatColor.RED + "Использование: /ban <имя игрока> <сообщение>");
+            player.sendMessage(PREFIX + ChatColor.RED + "Использование: /ban <имя игрока> <время> <сообщение>");
             return false;
-        } else {
-            String playerNameToban = args[0];
+        } else if (!Arrays.asList('s', 'm', 'h', 'd').contains(args[1].charAt(args[1].length() - 1)) || !args[1].substring(0, args[1].length() - 1).matches("-?\\d+(\\.\\d+)?")) {
             StringBuilder banMessage = new StringBuilder();
             for (int i = 1; i < args.length; i++) {
                 banMessage.append(args[i]).append(" ");
             }
-
-            Bukkit.getBanList(BanList.Type.NAME).addBan(playerNameToban, SERVERPREFIX + ChatColor.RED + " \n\nЗабанен по причине: " + banMessage.toString().trim(), null, player.getName());
-
-            if (Bukkit.getPlayer(args[0]) != null && Bukkit.getPlayer(args[0]).isOnline()) {
-                Player target = Bukkit.getPlayer(args[0]);
-                target.kickPlayer(SERVERPREFIX + ChatColor.RED + " \n\nЗабанен по причине: " + banMessage.toString().trim());
-            }
-            
-            Bukkit.broadcastMessage(SERVERPREFIX + ChatColor.LIGHT_PURPLE + "§l" + playerNameToban + "§r"  + ChatColor.LIGHT_PURPLE + " забанен по причине: " + banMessage.toString().trim());
+            eventListener.banPlayer(args[0], 86400*365*30);
+            Bukkit.broadcastMessage(SERVERPREFIX + ChatColor.LIGHT_PURPLE + "§l" + player.getName() + "§r"  + ChatColor.LIGHT_PURPLE + " перманентно забанил " + "§l" + args[0] + "§r"  + ChatColor.LIGHT_PURPLE + " за §l" + banMessage.toString().trim());
+            Bukkit.getBanList(BanList.Type.NAME).addBan(args[0], SERVERPREFIX + ChatColor.RED + " \n\nЗабанен по причине: " + banMessage.toString().trim(), null, player.getName());
             return true;
         }
+
+        String playerNameToban = args[0];
+
+        int time = Integer.parseInt(args[1].substring(0, args[1].length() - 1));
+        char timeType = args[1].charAt(args[1].length() - 1);
+        String timeTypeStr = "Секунд";
+        int timeForChat = time;
+        switch (timeType) {
+            case ('s'):
+                if (time >= 31536000) {player.sendMessage(PREFIX + ChatColor.RED + "Для перманентного бана не указывайте время!"); return false;}
+                break;
+            case ('m'):
+                if (time >= 525600) {player.sendMessage(PREFIX + ChatColor.RED + "Для перманентного бана не указывайте время!"); return false;}
+                time = time*60;
+                timeTypeStr = "Минут";
+                break;
+            case ('h'):
+                if (time >= 8760) {player.sendMessage(PREFIX + ChatColor.RED + "Для перманентного бана не указывайте время!"); return false;}
+                time = time*3600;
+                timeTypeStr = "Часов";
+                break;
+            case ('d'):
+                if (time >= 365) {player.sendMessage(PREFIX + ChatColor.RED + "Для перманентного бана не указывайте время!"); return false;}
+                time = time*86400;
+                timeTypeStr = "Дней";
+                break;
+        }
+
+        StringBuilder banMessage = new StringBuilder();
+        for (int i = 2; i < args.length; i++) {
+            banMessage.append(args[i]).append(" ");
+        }
+
+        eventListener.banPlayer(playerNameToban, time);
+        Bukkit.getBanList(BanList.Type.NAME).addBan(playerNameToban, "\n" + SERVERPREFIX + ChatColor.RED + " \n\nЗабанен по причине: " + "'" + banMessage.toString().trim() + "'", null, player.getName());
+        if (Bukkit.getPlayer(args[0]) != null && Bukkit.getPlayer(args[0]).isOnline()) {
+            Player target = Bukkit.getPlayer(args[0]);
+            target.kickPlayer(SERVERPREFIX + ChatColor.RED + " \n\nЗабанен по причине: " + banMessage.toString().trim() + "\n\nДо разбана " + timeForChat + " " + timeTypeStr);
+        }
+        Bukkit.broadcastMessage(SERVERPREFIX + ChatColor.LIGHT_PURPLE + "§l" + playerNameToban + "§r"  + ChatColor.LIGHT_PURPLE + " забанен на " + "§l" + timeForChat + " " + timeTypeStr + "§r" + ChatColor.LIGHT_PURPLE + " за §l'" + banMessage.toString().trim() + "'");
+        return true;
     }
 
     private boolean UnbanCommand(Player player, String[] args) {
@@ -279,6 +328,7 @@ public class MainCommandExecutor implements CommandExecutor {
         BanList banList = Bukkit.getServer().getBanList(BanList.Type.NAME);
 
         if (banList.isBanned(playerNameToUnban)) {
+            eventListener.unbanPlayer(playerNameToUnban);
             banList.pardon(playerNameToUnban);
             Bukkit.broadcastMessage(SERVERPREFIX + "§d" + "Игрок " + "§l" + playerNameToUnban + "§r" + "§d" + " был разбанен.");
         } else {
@@ -323,6 +373,86 @@ public class MainCommandExecutor implements CommandExecutor {
         Inventory enderChest = target.getEnderChest();
         player.openInventory(enderChest);
         player.sendMessage(PREFIX + "Открыт эндер-сундук игрока " + target.getName());
+        return true;
+    }
+
+    private boolean MuteCommand(Player player, String[] args) {
+        String target = args[0];
+
+        if (args.length <= 1) {
+            player.sendMessage(PREFIX + ChatColor.RED + "Использование: /mute <ник> <время> <причина> ");
+            return false;
+        } else if (target == null) {
+            player.sendMessage(PREFIX + ChatColor.RED + "Игрок " + target + " не найден.");
+            return false;
+        } else if (eventListener.isPlayerMuted(target)) {
+            player.sendMessage(PREFIX + ChatColor.RED + "Игрок " + target + " уже находится в муте.");
+            return false;
+        } else if (!Arrays.asList('s', 'm', 'h', 'd').contains(args[1].charAt(args[1].length() - 1)) || !args[1].substring(0, args[1].length() - 1).matches("-?\\d+(\\.\\d+)?")) {
+            StringBuilder reason = new StringBuilder();
+            for (int i = 1; i < args.length; i++) {
+                reason.append(args[i]).append(" ");
+            }
+            eventListener.mutePlayer(target, 86400*365*30);
+            Bukkit.broadcastMessage(SERVERPREFIX + ChatColor.LIGHT_PURPLE + "§l" + player.getName() + "§r"  + ChatColor.LIGHT_PURPLE + " перманентно замутил " + "§l" + target + "§r"  + ChatColor.LIGHT_PURPLE + " за §l" + reason.toString().trim());
+            return true;
+        }
+
+        
+        int time = Integer.parseInt(args[1].substring(0, args[1].length() - 1));
+        char timeType = args[1].charAt(args[1].length() - 1);
+
+        String timeTypeStr = "Секунд";
+        int timeForChat = time;
+
+        switch (timeType) {
+            case ('s'):
+                if (time >= 31536000) {player.sendMessage(PREFIX + ChatColor.RED + "Для перманентного бана не указывайте время!"); return false;}
+                break;
+            case ('m'):
+                if (time >= 525600) {player.sendMessage(PREFIX + ChatColor.RED + "Для перманентного бана не указывайте время!"); return false;}
+                time = time*60;
+                timeTypeStr = "Минут";
+                break;
+            case ('h'):
+                if (time >= 8760) {player.sendMessage(PREFIX + ChatColor.RED + "Для перманентного бана не указывайте время!"); return false;}
+                time = time*3600;
+                timeTypeStr = "Часов";
+                break;
+            case ('d'):
+                if (time >= 365) {player.sendMessage(PREFIX + ChatColor.RED + "Для перманентного бана не указывайте время!"); return false;}
+                time = time*86400;
+                timeTypeStr = "Дней";
+                break;
+        }
+        
+        StringBuilder reason = new StringBuilder();
+        for (int i = 2; i < args.length; i++) {
+            reason.append(args[i]).append(" ");
+        }
+        eventListener.mutePlayer(target, time);
+        Bukkit.broadcastMessage(SERVERPREFIX + ChatColor.LIGHT_PURPLE + "§l" + player.getName() + "§r"  + ChatColor.LIGHT_PURPLE + " замутил " + "§l" + target + "§r"  + ChatColor.LIGHT_PURPLE + " на§l " + timeForChat + " " + timeTypeStr + " §r" + ChatColor.LIGHT_PURPLE + "за §l" + reason.toString().trim());
+        return true;
+    }
+
+    private boolean UnmuteCommand(Player player, String[] args) {
+        if (args.length != 1) {
+            player.sendMessage(PREFIX + ChatColor.RED + "Использование: /unmute <ник>");
+            return false;
+        }
+
+        Player target = Bukkit.getPlayer(args[0]);
+        if (target == null) {
+            player.sendMessage(PREFIX + ChatColor.RED + "Игрок " + args[0] + " не найден.");
+            return false;
+        }
+
+        if (eventListener.isPlayerMuted(target.getName())) {
+            eventListener.unmutePlayer(target.getName());
+            player.sendMessage(SERVERPREFIX + ChatColor.LIGHT_PURPLE + "§l" + target.getName() + "§r"+ ChatColor.LIGHT_PURPLE + " был размьючен.");
+        } else {
+            player.sendMessage(PREFIX + ChatColor.RED + "Игрок " + target.getName() + " не был замьючен.");
+        }
         return true;
     }
 }
