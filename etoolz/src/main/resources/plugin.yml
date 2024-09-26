@@ -53,3 +53,12 @@ commands:
 
   enderchest:
     description: Открыть эндер-сундук игрока
+  
+  mute:
+   description: Замутить игрока
+
+  unmute:
+    description: Размутить игрока
+  
+  mutes:
+    description: Показать список замученых игроков
