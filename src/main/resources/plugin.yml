@@ -1,5 +1,5 @@
 name: etoolz
-version: 1.0.0
+version: 2.0.0
 apiVersion: 1.16.5
 main: com.eiztripsdev.Main
 commands:

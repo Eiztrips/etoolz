@@ -114,7 +114,11 @@ public class EventListener implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        if (!configMethod.isPlayerBanned(event.getPlayer().getName()) && !configMethod.isPlayerVanished(event.getPlayer().getName())) {
+        if (configMethod.isPlayerVanished(event.getPlayer().getName())) {
+            event.setQuitMessage(null);
+        } else if (configMethod.isPlayerBanned(event.getPlayer().getName())) {
+            event.setQuitMessage(null); 
+        } else {
             event.getPlayer().getLocation().getWorld().playSound(
                 event.getPlayer().getLocation(),
                 Sound.ENTITY_FIREWORK_ROCKET_BLAST,
@@ -128,10 +132,7 @@ public class EventListener implements Listener {
                 1, 1, 1
             );
             String playerName = event.getPlayer().getName();
-            event.setQuitMessage(null); 
             Bukkit.broadcastMessage(SERVERPREFIX + "§l" + playerName + "§r§7 вышел с сервера");
-        } else if (configMethod.isPlayerVanished(event.getPlayer().getName())) {
-            event.setQuitMessage(null);
         }
     }
 

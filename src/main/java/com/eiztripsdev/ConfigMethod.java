@@ -88,7 +88,7 @@ public class ConfigMethod {
                 return false;
             }
         }
-        return true;
+        return false;
     }
 
     public boolean isPlayerVanished(String playerName) {
@@ -99,7 +99,7 @@ public class ConfigMethod {
                 return true;
             }
         }
-        return true;
+        return false;
     }
 
     public void saveConfig() {
