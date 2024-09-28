@@ -27,40 +27,53 @@ public class ConfigMethod {
     }
 
     public void mutePlayer(String playerName, int muteDurationSeconds) {
+        playerName = playerName.toLowerCase();
         long muteEndTime = System.currentTimeMillis() + (muteDurationSeconds * 1000L);
         config.set("mutedPlayers." + playerName, muteEndTime);
         saveConfig();
     }
 
     public void banPlayer(String playerName, int muteDurationSeconds) {
+        playerName = playerName.toLowerCase();
         long banEndTime = System.currentTimeMillis() + (muteDurationSeconds * 1000L);
         config.set("bannedPlayers." + playerName, banEndTime);
         saveConfig();
     }
 
     public void VanishPlayer(String playerName) {
+        playerName = playerName.toLowerCase();
         config.set("VanishPlayers." + playerName, true);
         saveConfig();
     }
 
+    public void joinPlayer(String playerName) {
+        playerName = playerName.toLowerCase();
+        config.set("Players." + playerName, true);
+        saveConfig();
+    }
+
     public void unmutePlayer(String playerName) {
+        playerName = playerName.toLowerCase();
         config.set("mutedPlayers." + playerName, null);
         saveConfig();
     }
 
     public void unbanPlayer(String playerName) {
+        playerName = playerName.toLowerCase();
         Bukkit.getServer().getBanList(BanList.Type.NAME).pardon(playerName);
         config.set("bannedPlayers." + playerName, null);
         saveConfig();
     }
 
     public void unvanishPlayer(String playerName) {
+        playerName = playerName.toLowerCase();
         config.set("VanishPlayers." + playerName, false);
         saveConfig();
     }
 
     public boolean isPlayerMuted(String playerName) {
         reloadConfig();
+        playerName = playerName.toLowerCase();
 
         if (config.contains("mutedPlayers." + playerName)) {
             long muteEndTime = config.getLong("mutedPlayers." + playerName);
@@ -77,6 +90,7 @@ public class ConfigMethod {
 
     public boolean isPlayerBanned(String playerName) {
         reloadConfig();
+        playerName = playerName.toLowerCase();
 
         if (config.contains("bannedPlayers." + playerName)) {
             long banEndTime = config.getLong("bannedPlayers." + playerName);
@@ -93,9 +107,22 @@ public class ConfigMethod {
 
     public boolean isPlayerVanished(String playerName) {
         reloadConfig();
+        playerName = playerName.toLowerCase();
 
         if (config.contains("VanishPlayers." + playerName)) {
             if (config.getBoolean("VanishPlayers." + playerName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isPlayerExist(String playerName) {
+        reloadConfig();
+        playerName = playerName.toLowerCase();
+
+        if (config.contains("Players." + playerName)) {
+            if (config.getBoolean("Players." + playerName)) {
                 return true;
             }
         }

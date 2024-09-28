@@ -46,14 +46,14 @@ public class MainCommandExecutor implements CommandExecutor {
                     net.md_5.bungee.api.chat.TextComponent.fromLegacyText(Main.textFormater("&l&eVanish - enabled!"))
                 );
             }
-        }.runTaskTimer(plugin, 0L, 40L); // Используем plugin для запуска задачи
+        }.runTaskTimer(plugin, 0L, 40L);
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         
         if (!(sender instanceof Player)) {
-            sender.sendMessage(PREFIX + ChatColor.RED + "Эту команду может выполнить только игрок.");
+            sender.sendMessage(PREFIX + ChatColor.RED + "эту команду может выполнить только игрок");
             return false;
         }
         
@@ -110,29 +110,28 @@ public class MainCommandExecutor implements CommandExecutor {
     }
 
     private boolean FlyCommand(Player player, String[] args) {
-        if (args[0] == null) {
-            player.sendMessage(PREFIX + ChatColor.RED + "Игрок " + args[0] + " не найден.");
-            return false;
-        }
         if (args.length == 0) {
             Player targetPlayer = player;
             if (targetPlayer.getAllowFlight()) {
                 targetPlayer.setAllowFlight(false);
-                targetPlayer.sendMessage(PREFIX + "Режим полёта выключен.");
+                targetPlayer.sendMessage(PREFIX + "Режим полёта выключен");
             } else {
                 targetPlayer.setAllowFlight(true);
-                targetPlayer.sendMessage(PREFIX + "Режим полёта включён.");
+                targetPlayer.sendMessage(PREFIX + "Режим полёта включён");
             }
+        } else if (Bukkit.getPlayer(args[0]) == null) {
+            player.sendMessage(PREFIX + ChatColor.RED + "Игрок §l" + args[0] + "§r§c не найден");
+            return false;
         } else {
             Player targetPlayer = Bukkit.getPlayer(args[0]);
             if (targetPlayer.getAllowFlight()) {
                 targetPlayer.setAllowFlight(false);
-                player.sendMessage(PREFIX + "Режим полёта для игрока§l " + targetPlayer.getName() + "§r§7 выключен.");
-                targetPlayer.sendMessage(PREFIX + "Режим полёта выключен.");
+                player.sendMessage(PREFIX + "Режим полёта для игрока§l " + targetPlayer.getName() + "§r§a выключен");
+                targetPlayer.sendMessage(PREFIX + "Режим полёта выключен");
             } else {
                 targetPlayer.setAllowFlight(true);
-                player.sendMessage(PREFIX + "Режим полёта для игрока§l " + targetPlayer.getName() + "§r§7 включён.");
-                targetPlayer.sendMessage(PREFIX + "Режим полёта включён.");
+                player.sendMessage(PREFIX + "Режим полёта для игрока§l " + targetPlayer.getName() + "§r§a включён");
+                targetPlayer.sendMessage(PREFIX + "Режим полёта включён");
             }
         }
         return true;
@@ -158,7 +157,6 @@ public class MainCommandExecutor implements CommandExecutor {
             Bukkit.broadcastMessage(SERVERPREFIX + "§l" + player.getName() + "§r§7 зашёл на сервер");
             configMethod.unvanishPlayer(player.getName());
             player.removeMetadata("vanished", JavaPlugin.getProvidingPlugin(getClass()));
-            player.sendMessage(PREFIX + "Вы больше не невидимы.");
             player.sendTitle(Main.textFormater("&l&3Вы вышли из режима невидимки!"), Main.textFormater("&3Вас видят все"), 10, 40, 20 );
             startVanishActionBar(player);
         } else {
@@ -182,7 +180,6 @@ public class MainCommandExecutor implements CommandExecutor {
             configMethod.VanishPlayer(player.getName());
             Bukkit.broadcastMessage(SERVERPREFIX + "§l" + player.getName() + "§r§7 вышел с сервера");
             player.setMetadata("vanished", new FixedMetadataValue(JavaPlugin.getProvidingPlugin(getClass()), true));
-            player.sendMessage(PREFIX + "Вы теперь невидимы для других игроков.");
             player.sendTitle(Main.textFormater("&l&3Вы вошли в режим невидимки!"), Main.textFormater("&3Вас никто не видит"), 10, 40, 20 );
             startVanishActionBar(player);
         }
@@ -192,7 +189,7 @@ public class MainCommandExecutor implements CommandExecutor {
 
     private boolean BroadcastCommand(Player player, String[] args) {
             if (args.length == 0) {
-                player.sendMessage(PREFIX + "Использование: /broadcast <сообщение>");
+                player.sendMessage(PREFIX + "Использование > §l/broadcast <сообщение>");
                 return false;
             } else {
                 StringBuilder message = new StringBuilder();
@@ -205,22 +202,19 @@ public class MainCommandExecutor implements CommandExecutor {
         }
 
     private boolean HealCommand(Player player, String[] args) {
-        if (args[0] == null) {
-            player.sendMessage(PREFIX + ChatColor.RED + "Игрок " + args[0] + " не найден.");
-            return false;
-        }
         if (args.length == 0) {
             player.setHealth(player.getMaxHealth());
+            player.sendMessage(PREFIX + "Здоровье восстановлено");
             return true;
         } else {
-            Player targetPlayer = Bukkit.getPlayer(args[0]);
-            if (targetPlayer == null) {
-                player.sendMessage(PREFIX + ChatColor.RED + "Игрок с таким именем не найден.");
+            if (Bukkit.getPlayer(args[0]) == null) {
+                player.sendMessage(PREFIX + ChatColor.RED + "Игрок §l" + args[0] + "§r§c не найден");
                 return false;
             } else {
+                Player targetPlayer = Bukkit.getPlayer(args[0]);
                 targetPlayer.setHealth(targetPlayer.getMaxHealth());
-                targetPlayer.sendMessage(PREFIX + "Вам восстановил здоровье игрок &l" + player.getName() + "&r&7.");
-                player.sendMessage(PREFIX + "Вы восстановили здоровье игроку &l" + targetPlayer.getName() + "&r&7.");
+                targetPlayer.sendMessage(PREFIX + "Вам восстановил здоровье игрок §l" + player.getName());
+                player.sendMessage(PREFIX + "Вы восстановили здоровье игроку §l" + targetPlayer.getName());
                 return true;
             }
         }
@@ -230,24 +224,27 @@ public class MainCommandExecutor implements CommandExecutor {
         if (args.length == 0) {
             if (player.isInvulnerable()) {
                 player.setInvulnerable(false);
-                player.sendMessage(PREFIX + "Режим бога выключен.");
+                player.sendMessage(PREFIX + "Режим бога выключен");
                 return true;
             } else {
                 player.setInvulnerable(true);
-                player.sendMessage(PREFIX + "Режим бога включен.");
+                player.sendMessage(PREFIX + "Режим бога включен");
                 return true;
             }
+        } else if (Bukkit.getPlayer(args[0]) == null) {
+            player.sendMessage(PREFIX + ChatColor.RED + "Игрок §l" + args[0] + "§r§c не найден");
+            return false;
         } else {
             Player targetPlayer = Bukkit.getPlayer(args[0]);
             if (targetPlayer.isInvulnerable()) {
                 targetPlayer.setInvulnerable(false);
-                player.sendMessage(PREFIX + "Режим бога для игрока§l " + targetPlayer.getName() + "§r§7 выключен.");
-                targetPlayer.sendMessage(PREFIX + "Режим бога выключен.");
+                player.sendMessage(PREFIX + "Режим бога для игрока§l " + targetPlayer.getName() + "§r§a выключен");
+                targetPlayer.sendMessage(PREFIX + "Режим бога выключен");
                 return true;
             } else {
                 targetPlayer.setInvulnerable(true);
-                player.sendMessage(PREFIX + "Режим бога для игрока§l " + targetPlayer.getName() + "§r§7 включен.");
-                targetPlayer.sendMessage(PREFIX + "Режим бога включен.");
+                player.sendMessage(PREFIX + "Режим бога для игрока§l " + targetPlayer.getName() + "§r§a включен");
+                targetPlayer.sendMessage(PREFIX + "Режим бога включен");
                 return true;
             }
         }
@@ -255,9 +252,14 @@ public class MainCommandExecutor implements CommandExecutor {
 
     private boolean GameModeSwitcherCommand(Player player, String[] args) {
         if (args.length == 0) {
+            player.sendMessage(PREFIX + ChatColor.RED + Main.textFormater("Введите режим игры > §l0, 1, 2, 3"));
             return false;
         } else {
             if (args.length == 2) {
+                if (!configMethod.isPlayerExist(args[1])) {
+                    player.sendMessage(PREFIX + ChatColor.RED + "Игрок §l" + args[0] + "§r§a не найден");
+                    return false; 
+                }
                 player = Bukkit.getPlayer(args[1]);
             }
             switch (args[0]) {
@@ -286,6 +288,7 @@ public class MainCommandExecutor implements CommandExecutor {
                     player.sendMessage(PREFIX + "Режим игры изменён на наблюдатель");
                     return true;
                 default:
+                    player.sendMessage(PREFIX + ChatColor.RED + Main.textFormater("Введите существующий режим игры > §l0, 1, 2, 3"));
                     return false;
             }
         }
@@ -293,13 +296,13 @@ public class MainCommandExecutor implements CommandExecutor {
 
     private boolean KickCommand(Player player, String[] args) {
         if (args.length < 2) {
-            player.sendMessage(PREFIX + ChatColor.RED + "Использование: /kick <имя игрока> <сообщение>");
+            player.sendMessage(PREFIX + ChatColor.RED + "Использование > §l/kick <имя игрока> <сообщение>");
             return false;
         } else {
             Player target = Bukkit.getPlayer(args[0]);
 
             if (target == null || !target.isOnline()) {
-                player.sendMessage(PREFIX + ChatColor.RED + "Игрок " + args[0] + " не найден.");
+                player.sendMessage(PREFIX + ChatColor.RED + "Игрок §l" + args[0] + "§r§c не найден");
                 return false;
             }
 
@@ -308,15 +311,18 @@ public class MainCommandExecutor implements CommandExecutor {
                 kickMessage.append(args[i]).append(" ");
             }
 
-            target.kickPlayer(SERVERPREFIX + ChatColor.RED + " \n\nКикнут по причине: " + kickMessage.toString().trim());
-            Bukkit.broadcastMessage(SERVERPREFIX + ChatColor.LIGHT_PURPLE + " §l" + target.getName() + "§r" + ChatColor.LIGHT_PURPLE + " кикнут по причине: " + kickMessage.toString().trim());
+            target.kickPlayer(SERVERPREFIX + ChatColor.RED + " \n\nКикнут по причине: \n" + kickMessage.toString().trim());
+            Bukkit.broadcastMessage(SERVERPREFIX + ChatColor.LIGHT_PURPLE + "§l" + target.getName() + "§r" + ChatColor.LIGHT_PURPLE + " кикнут по причине: " + kickMessage.toString().trim());
             return true;
         }
     }
 
     private boolean BanCommand(Player player, String[] args) {
         if (args.length < 2) {
-            player.sendMessage(PREFIX + ChatColor.RED + "Использование: /ban <имя игрока> <время> <сообщение>");
+            player.sendMessage(PREFIX + ChatColor.RED + "Использование > §l/ban <имя игрока> <время> <сообщение>");
+            return false;
+        } else if (!configMethod.isPlayerExist(args[0])) {
+            player.sendMessage(PREFIX + ChatColor.RED + "Игрок §l" + args[0] + "§r§c не найден");
             return false;
         } else if (!Arrays.asList('s', 'm', 'h', 'd').contains(args[1].charAt(args[1].length() - 1)) || !args[1].substring(0, args[1].length() - 1).matches("-?\\d+(\\.\\d+)?")) {
             StringBuilder banMessage = new StringBuilder();
@@ -338,7 +344,7 @@ public class MainCommandExecutor implements CommandExecutor {
                     10,
                     1, 1, 1
                 );
-                target.kickPlayer(SERVERPREFIX + " перманентно забанен" + " за §l" + banMessage.toString().trim());
+                target.kickPlayer(SERVERPREFIX + " перманентно забанен" + "\n§l" + banMessage.toString().trim());
             }
             Bukkit.broadcastMessage(SERVERPREFIX + ChatColor.LIGHT_PURPLE + "§l" + player.getName() + "§r"  + ChatColor.LIGHT_PURPLE + " перманентно забанил " + "§l" + args[0] + "§r"  + ChatColor.LIGHT_PURPLE + " за §l" + banMessage.toString().trim());
             Bukkit.getBanList(BanList.Type.NAME).addBan(args[0], SERVERPREFIX + ChatColor.RED + " \n\nЗабанен по причине: " + banMessage.toString().trim(), null, player.getName());
@@ -402,7 +408,10 @@ public class MainCommandExecutor implements CommandExecutor {
     private boolean UnbanCommand(Player player, String[] args) {
 
         if (args.length != 1) {
-            player.sendMessage(PREFIX + ChatColor.RED +"Использование: /unban <игрок>");
+            player.sendMessage(PREFIX + ChatColor.RED +"Использование > §l/unban <игрок>");
+            return false;
+        } else if (!configMethod.isPlayerExist(args[0])) {
+            player.sendMessage(PREFIX + ChatColor.RED + "Игрок §l" + args[0] + "§r§c не найден");
             return false;
         }
 
@@ -413,9 +422,9 @@ public class MainCommandExecutor implements CommandExecutor {
         if (banList.isBanned(playerNameToUnban)) {
             configMethod.unbanPlayer(playerNameToUnban);
             banList.pardon(playerNameToUnban);
-            Bukkit.broadcastMessage(SERVERPREFIX + "§d" + "Игрок " + "§l" + playerNameToUnban + "§r" + "§d" + " был разбанен.");
+            Bukkit.broadcastMessage(SERVERPREFIX + "§d" + "Игрок " + "§l" + playerNameToUnban + "§r" + "§d" + " был разбанен");
         } else {
-            player.sendMessage(PREFIX + ChatColor.RED + playerNameToUnban + " не был забанен");
+            player.sendMessage(PREFIX + ChatColor.RED + "§l" + playerNameToUnban + "§r§c не забанен");
         }
 
         return true;
@@ -423,53 +432,52 @@ public class MainCommandExecutor implements CommandExecutor {
 
     private boolean InvSeeCommand(Player player, String[] args) {
         if (args.length != 1) {
-            player.sendMessage(PREFIX + ChatColor.RED + "Использование: /inv <имя_игрока>");
+            player.sendMessage(PREFIX + ChatColor.RED + "Использование > §l/inv <имя_игрока>");
             return false;
         }
 
         Player target = Bukkit.getPlayer(args[0]);
 
         if (target == null || !target.isOnline()) {
-            player.sendMessage(PREFIX + ChatColor.RED + "Игрок " + args[0] + " не найден.");
+            player.sendMessage(PREFIX + ChatColor.RED + "Игрок §l" + args[0] + "§r§c не найден");
             return false;
         }
 
         player.openInventory(target.getInventory());
-        player.sendMessage(PREFIX + "Открыт инвентарь игрока " + target.getName());
+        player.sendMessage(PREFIX + "Открыт инвентарь игрока §l" + target.getName());
         return true;
     }
 
     private boolean EChestCommand(Player player, String[] args) {
         
         if (args.length != 1) {
-            player.sendMessage(PREFIX + ChatColor.RED + "Использование: /echest <ник>");
+            player.sendMessage(PREFIX + ChatColor.RED + "Использование > §l/echest <ник>");
             return false;
         }
 
         Player target = Bukkit.getPlayer(args[0]);
 
         if (target == null) {
-            player.sendMessage(PREFIX + ChatColor.RED + "Игрок " + args[0] + " не найден.");
+            player.sendMessage(PREFIX + ChatColor.RED + "Игрок §l" + args[0] + "§r§c не найден");
             return false;
         }
 
         Inventory enderChest = target.getEnderChest();
         player.openInventory(enderChest);
-        player.sendMessage(PREFIX + "Открыт эндер-сундук игрока " + target.getName());
+        player.sendMessage(PREFIX + "Открыт эндер-сундук игрока §l" + target.getName());
         return true;
     }
 
     private boolean MuteCommand(Player player, String[] args) {
         String target = args[0];
-
-        if (args.length <= 1) {
-            player.sendMessage(PREFIX + ChatColor.RED + "Использование: /mute <ник> <время> <причина> ");
+        if (!configMethod.isPlayerExist(target)) {
+            player.sendMessage(PREFIX + ChatColor.RED + "Игрок §l" + target + "§r§c не найден");
             return false;
-        } else if (target == null) {
-            player.sendMessage(PREFIX + ChatColor.RED + "Игрок " + target + " не найден.");
+        } else if (args.length <= 1) {
+            player.sendMessage(PREFIX + ChatColor.RED + "Использование > §l/mute <ник> <время> <причина> ");
             return false;
         } else if (configMethod.isPlayerMuted(target)) {
-            player.sendMessage(PREFIX + ChatColor.RED + "Игрок " + target + " уже находится в муте.");
+            player.sendMessage(PREFIX + ChatColor.RED + "Игрок §l" + target + "§r§c уже находится в муте");
             return false;
         } else if (!Arrays.asList('s', 'm', 'h', 'd').contains(args[1].charAt(args[1].length() - 1)) || !args[1].substring(0, args[1].length() - 1).matches("-?\\d+(\\.\\d+)?")) {
             StringBuilder reason = new StringBuilder();
@@ -490,20 +498,20 @@ public class MainCommandExecutor implements CommandExecutor {
 
         switch (timeType) {
             case ('s'):
-                if (time >= 31536000) {player.sendMessage(PREFIX + ChatColor.RED + "Для перманентного бана не указывайте время!"); return false;}
+                if (time >= 31536000) {player.sendMessage(PREFIX + ChatColor.RED + "Для перманентного мута не указывайте время!"); return false;}
                 break;
             case ('m'):
-                if (time >= 525600) {player.sendMessage(PREFIX + ChatColor.RED + "Для перманентного бана не указывайте время!"); return false;}
+                if (time >= 525600) {player.sendMessage(PREFIX + ChatColor.RED + "Для перманентного мута не указывайте время!"); return false;}
                 time = time*60;
                 timeTypeStr = "Минут";
                 break;
             case ('h'):
-                if (time >= 8760) {player.sendMessage(PREFIX + ChatColor.RED + "Для перманентного бана не указывайте время!"); return false;}
+                if (time >= 8760) {player.sendMessage(PREFIX + ChatColor.RED + "Для перманентного мута не указывайте время!"); return false;}
                 time = time*3600;
                 timeTypeStr = "Часов";
                 break;
             case ('d'):
-                if (time >= 365) {player.sendMessage(PREFIX + ChatColor.RED + "Для перманентного бана не указывайте время!"); return false;}
+                if (time >= 365) {player.sendMessage(PREFIX + ChatColor.RED + "Для перманентного мута не указывайте время!"); return false;}
                 time = time*86400;
                 timeTypeStr = "Дней";
                 break;
@@ -520,21 +528,21 @@ public class MainCommandExecutor implements CommandExecutor {
 
     private boolean UnmuteCommand(Player player, String[] args) {
         if (args.length != 1) {
-            player.sendMessage(PREFIX + ChatColor.RED + "Использование: /unmute <ник>");
+            player.sendMessage(PREFIX + ChatColor.RED + "Использование > §l/unmute <ник>");
             return false;
         }
 
-        Player target = Bukkit.getPlayer(args[0]);
-        if (target == null) {
-            player.sendMessage(PREFIX + ChatColor.RED + "Игрок " + args[0] + " не найден.");
+        String target = args[0];
+        if (!configMethod.isPlayerExist(target)) {
+            player.sendMessage(PREFIX + ChatColor.RED + "Игрок §l" + args[0] + "§r§c не найден");
             return false;
         }
 
-        if (configMethod.isPlayerMuted(target.getName())) {
-            configMethod.unmutePlayer(target.getName());
-            player.sendMessage(SERVERPREFIX + ChatColor.LIGHT_PURPLE + "§l" + target.getName() + "§r"+ ChatColor.LIGHT_PURPLE + " был размьючен.");
+        if (configMethod.isPlayerMuted(target)) {
+            configMethod.unmutePlayer(target);
+            player.sendMessage(SERVERPREFIX + "§l" + target + "§r§a" + " был размьючен");
         } else {
-            player.sendMessage(PREFIX + ChatColor.RED + "Игрок " + target.getName() + " не был замьючен.");
+            player.sendMessage(PREFIX + ChatColor.RED + "Игрок §l" + target + "§r§c не был замьючен");
         }
         return true;
     }

@@ -1,61 +1,111 @@
 name: etoolz
-version: 2.0.0
+version: 3.0.0
 apiVersion: 1.16.5
 main: com.eiztripsdev.Main
 commands:
   wspeed:
     description: Устанавливает скорость ходьбы.
-
+    permission: etoolz.wspeed
   fspeed:
     description: Устанавливает скорость полёта.
-
+    permission: etoolz.fspeed
   fly:
     description: Включает/выключает полет игрока.
-
+    permission: etoolz.fly
   vanish:
     description: Выключает/Включает видимость игрока.
+    permission: etoolz.vanish
   v:
     description: Выключает/Включает видимость игрока.
-
+    permission: etoolz.vanish
   broadcast:
     description: Отправляет сообщение всем игрокам.
+    permission: etoolz.broadcast
   bc:
     description: Отправляет сообщение всем игрокам.
-
+    permission: etoolz.broadcast
   heal:
-    description: Вылечить здоровье игроку
-    
+    description: Вылечить здоровье игроку.
+    permission: etoolz.heal
   god:
-    description: Включает/выключает бессмертие игрока
-
+    description: Включает/выключает бессмертие игрока.
+    permission: etoolz.god
   gamemode:
-    description: Изменяет режим игры игроку
+    description: Изменяет режим игры игроку.
+    permission: etoolz.gamemode
   gm:
-    description: Изменяет режим игры игроку
-
+    description: Изменяет режим игры игроку.
+    permission: etoolz.gamemode
   kick:
-    description: Кикнуть игрока
-
+    description: Кикнуть игрока.
+    permission: etoolz.kick
   ban:
-    description: Забанить игрока
-  
+    description: Забанить игрока.
+    permission: etoolz.ban
   unban:
-    description: Разбанить игрока
-  
+    description: Разбанить игрока.
+    permission: etoolz.unban
   inventory:
-    description: Открыть инвентарь игрока
-
+    description: Открыть инвентарь игрока.
+    permission: etoolz.inventory
   inv:
-    description: Открыть инвентарь игрока
-  
+    description: Открыть инвентарь игрока.
+    permission: etoolz.inventory
   echest:
-    description: Открыть эндер-сундук игрока
-
+    description: Открыть эндер-сундук игрока.
+    permission: etoolz.echest
   enderchest:
-    description: Открыть эндер-сундук игрока
-  
+    description: Открыть эндер-сундук игрока.
+    permission: etoolz.echest
   mute:
-   description: Замутить игрока
-
+    description: Замутить игрока.
+    permission: etoolz.mute
   unmute:
-    description: Размутить игрока
+    description: Размутить игрока.
+    permission: etoolz.unmute
+permissions:
+  etoolz.wspeed:
+    description: Позволяет использовать команду wspeed
+    default: op
+  etoolz.fspeed:
+    description: Позволяет использовать команду fspeed
+    default: op
+  etoolz.fly:
+    description: Позволяет использовать команду fly
+    default: op
+  etoolz.vanish:
+    description: Позволяет использовать команду vanish
+    default: op
+  etoolz.broadcast:
+    description: Позволяет использовать команду broadcast
+    default: op
+  etoolz.heal:
+    description: Позволяет использовать команду heal
+    default: op
+  etoolz.god:
+    description: Позволяет использовать команду god
+    default: op
+  etoolz.gamemode:
+    description: Позволяет использовать команду gamemode
+    default: op
+  etoolz.kick:
+    description: Позволяет использовать команду kick
+    default: op
+  etoolz.ban:
+    description: Позволяет использовать команду ban
+    default: op
+  etoolz.unban:
+    description: Позволяет использовать команду unban
+    default: op
+  etoolz.inventory:
+    description: Позволяет использовать команду inventory
+    default: op
+  etoolz.echest:
+    description: Позволяет использовать команду echest
+    default: op
+  etoolz.mute:
+    description: Позволяет использовать команду mute
+    default: op
+  etoolz.unmute:
+    description: Позволяет использовать команду unmute
+    default: op

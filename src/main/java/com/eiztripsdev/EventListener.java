@@ -5,11 +5,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.Particle;
@@ -18,11 +21,14 @@ import org.bukkit.BanList;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandMap;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.lang.reflect.Field;
 
 public class EventListener implements Listener {
     private static final String PREFIX = Main.PREFIX;
@@ -59,9 +65,36 @@ public class EventListener implements Listener {
     }
 
     @EventHandler
+    public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
+        Player player = event.getPlayer();
+        String commandMessage = event.getMessage().toLowerCase();
+        String[] commandParts = commandMessage.split(" ");
+        String commandName = commandParts[0].substring(1);
+        Command command = getCommand(commandName);
+        if (command == null || !player.hasPermission(command.getPermission())) {
+            event.setCancelled(true);
+        }
+    }
+
+    private Command getCommand(String name) {
+        try {
+            Field commandMapField = SimplePluginManager.class.getDeclaredField("commandMap");
+            commandMapField.setAccessible(true);
+            CommandMap commandMap = (CommandMap) commandMapField.get(Bukkit.getPluginManager());
+            return commandMap.getCommand(name);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @EventHandler
     public void onPlayerLogin(PlayerLoginEvent event) {
         BanList banList = Bukkit.getServer().getBanList(BanList.Type.NAME);
         Player player = event.getPlayer();
+        if (!configMethod.isPlayerExist(event.getPlayer().getName())) {
+            configMethod.joinPlayer(event.getPlayer().getName());
+        }
         if (banList.isBanned(player.getName())) {
             if (configMethod.isPlayerBanned(player.getName())) {
                 LocalDateTime dateTime = LocalDateTime.ofInstant(
@@ -73,8 +106,9 @@ public class EventListener implements Listener {
                 event.setKickMessage(event.getKickMessage().substring(40) + "\n\n Время разбана: " + formattedDate);
             } else {
                 event.setKickMessage(SERVERPREFIX + " Пожалуйста, перезайдите!");
+                configMethod.unbanPlayer(player.getName());
             }
-        };
+        }
     }
 
     @EventHandler
@@ -114,8 +148,8 @@ public class EventListener implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
+        event.setQuitMessage(null);
         if (configMethod.isPlayerVanished(event.getPlayer().getName())) {
-            event.setQuitMessage(null);
         } else if (configMethod.isPlayerBanned(event.getPlayer().getName())) {
             event.setQuitMessage(null); 
         } else {
@@ -146,9 +180,9 @@ public class EventListener implements Listener {
         String killerName = "Неизвестный";
         if (player.getKiller() != null) {
             killerName = player.getKiller().getName();
-            Bukkit.broadcastMessage(SERVERPREFIX + "§l" + playerName + "§r§7 был убит игроком §l" + killerName + "§r§7!");
+            Bukkit.broadcastMessage("§c§l§o" + playerName + "§r§c§o был убит игроком §l§o" + killerName + "§r§c§o");
         } else {
-            Bukkit.broadcastMessage(SERVERPREFIX + "§l" + playerName + "§r§7 был убит");
+            Bukkit.broadcastMessage("§l§o§c" + playerName + "§r§o§c был убит");
         }
     }
 
@@ -170,5 +204,10 @@ public class EventListener implements Listener {
             player.sendMessage(PREFIX + ChatColor.RED + "Вы замьючены и не можете отправлять сообщения.");
             event.setCancelled(true); 
         }
+    }
+
+    @EventHandler
+    public void onPlayerKick(PlayerKickEvent event) {
+        event.setLeaveMessage("");
     }
 }

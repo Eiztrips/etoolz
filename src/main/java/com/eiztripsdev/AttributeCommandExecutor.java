@@ -33,6 +33,10 @@ public class AttributeCommandExecutor implements CommandExecutor {
 
     private boolean WalkSpeedCommand(Player player, String[] args) {
         try {
+            if (args.length == 0) {
+                player.sendMessage(PREFIX + ChatColor.RED + "Использование: /wspeed <скорость>");
+                return false;
+            }
             float speed = Float.parseFloat(args[0]);
             if (speed < 0 || speed > 10) {
                 player.sendMessage(PREFIX + ChatColor.RED + "Скорость может быть указана от 1 до 10!");
@@ -49,6 +53,10 @@ public class AttributeCommandExecutor implements CommandExecutor {
     }
 
     private boolean FlySpeedCommand(Player player, String[] args) {
+        if (args.length == 0) {
+            player.sendMessage(PREFIX + ChatColor.RED + "Использование: /wspeed <скорость>");
+            return false;
+        }
         if (args.length == 0) {
             player.sendMessage(PREFIX + ChatColor.RED + "Скорость может быть указана от 1 до 10!");
             return false;

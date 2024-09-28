@@ -6,7 +6,7 @@
 
     <groupId>com.eiztripsdev</groupId>
     <artifactId>etoolz</artifactId>
-    <version>2.0-SNAPSHOT</version>
+    <version>3.0-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -41,5 +41,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
